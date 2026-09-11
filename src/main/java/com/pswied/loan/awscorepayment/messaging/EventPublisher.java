@@ -1,24 +1,31 @@
 package com.pswied.loan.awscorepayment.messaging;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.pswied.loan.awscorepayment.messaging.backbone.EventBackbone;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EventPublisher {
 
-    private final List<String> events = new ArrayList<>();
+    private final OutboxService outboxService;
+    private final EventBackbone backbone;
+
+    public EventPublisher(OutboxService outboxService, EventBackbone backbone) {
+        this.outboxService = outboxService;
+        this.backbone = backbone;
+    }
 
     public void publish(String eventType, String payload) {
-        // simple in-memory event sink for demo and tests
-        events.add(eventType + ":" + payload);
+        // store to outbox and publish via backbone (mock immediate publish)
+        outboxService.storeEvent(eventType, payload, payload);
     }
 
     public List<String> getPublishedEvents() {
-        return List.copyOf(events);
+        return backbone.getPublishedEvents();
     }
 
     public void clear() {
-        events.clear();
+        outboxService.clear();
     }
 }
