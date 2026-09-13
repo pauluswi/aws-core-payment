@@ -18,6 +18,9 @@ management:
 security:
   api-key: ""
 
+messaging:
+  backbone: "inmemory" # options: inmemory (default), remote
+
 logging:
   level:
     root: INFO

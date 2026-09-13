@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mock-backbone:
+    image: python:3.11-slim
+    container_name: mock-backbone
+    working_dir: /opt/mock
+    volumes:
+      - ./scripts/mock_backbone:/opt/mock:ro
+    command: ["python", "server.py"]
+    ports:
+      - "8081:8081"
+
+  # Example app service: build locally and point to mock-backbone for messaging
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MESSAGING_BACKBONE=remote
+      - MOCK_BACKBONE_URL=http://mock-backbone:8081
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mock-backbone
+
+# Notes:
+# - mock-backbone provides simple HTTP endpoints at /publish and /events for demo usage.
+# - To run the full demo locally: docker-compose up --build
+# - The app Dockerfile should build the Spring Boot jar; included as a suggestion only.

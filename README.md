@@ -53,6 +53,41 @@ The project includes architecture documentation in the docs folder:
 
 This repo is currently a scaffold for the platform and does not yet contain the full production implementation. It is intended as a foundation for building domain-driven payment services and related infrastructure components.
 
+## Demo (Docker Compose)
+
+A lightweight demo uses mocked external services so the platform can be demonstrated offline.
+
+1. Start the demo services:
+
+   docker-compose up --build
+
+   This starts:
+   - mock-backbone (Flask) on http://localhost:8081
+   - app (Spring Boot) on http://localhost:8080
+
+2. Create a payment (example):
+
+   curl -s -X POST http://localhost:8080/api/payments \
+     -H "Content-Type: application/json" \
+     -d '{"merchantId":"demo-merchant","customerId":"demo-customer","reference":"ref-demo-1","amount":12.34,"currency":"USD","paymentMethod":"CARD","channel":"WEB","idempotencyKey":"idem-demo-1"}' | jq
+
+3. Trigger authorization processing (call orchestrator endpoint or simulate by invoking a POST to a helper endpoint). For this scaffold, call the orchestrator by ID via the app (example uses a direct internal endpoint if implemented):
+
+   # Replace <paymentId> with the id returned by the create call
+   curl -s -X POST http://localhost:8080/api/payments/<paymentId>/authorize
+
+   (If no authorize endpoint exists, use the app logs or tests to run orchestrator flows.)
+
+4. Inspect events from the mock backbone:
+
+   curl http://localhost:8081/events | sed -n '1,200p'
+
+Notes:
+- The mock backbone retains events in memory only while running.
+- To switch the app to use the remote mock backbone, set messaging.backbone=remote in application.yml or via environment variables.
+
+
+
 ## Suggested next steps
 
 A real implementation would typically include:
