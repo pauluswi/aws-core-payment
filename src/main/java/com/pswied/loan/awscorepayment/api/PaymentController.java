@@ -3,6 +3,7 @@ package com.pswied.loan.awscorepayment.api;
 import com.pswied.loan.awscorepayment.api.dto.CreatePaymentRequest;
 import com.pswied.loan.awscorepayment.api.dto.PaymentResponse;
 import com.pswied.loan.awscorepayment.domain.Payment;
+import com.pswied.loan.awscorepayment.orchestrator.PaymentOrchestrator;
 import com.pswied.loan.awscorepayment.service.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentOrchestrator paymentOrchestrator;
 
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, PaymentOrchestrator paymentOrchestrator) {
         this.paymentService = paymentService;
+        this.paymentOrchestrator = paymentOrchestrator;
     }
 
     @PostMapping
@@ -32,6 +35,12 @@ public class PaymentController {
 
     @GetMapping("/{paymentId}")
     public PaymentResponse getPayment(@PathVariable String paymentId) {
+        return PaymentResponse.from(paymentService.getPayment(paymentId));
+    }
+
+    @PostMapping("/{paymentId}/authorize")
+    public PaymentResponse authorizePayment(@PathVariable String paymentId) {
+        paymentOrchestrator.processAuthorization(paymentId);
         return PaymentResponse.from(paymentService.getPayment(paymentId));
     }
 }

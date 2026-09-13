@@ -73,4 +73,34 @@ class PaymentControllerTest {
             .andExpect(jsonPath("$.id").value(paymentId))
             .andExpect(jsonPath("$.reference").value("ref-002"));
     }
+
+    @Test
+    void shouldAuthorizePayment() throws Exception {
+        String requestJson = """
+            {
+              "merchantId": "merchant-003",
+              "customerId": "customer-003",
+              "reference": "ref-003",
+              "amount": 75.00,
+              "currency": "USD",
+              "paymentMethod": "CARD",
+              "channel": "WEB",
+              "idempotencyKey": "idem-003"
+            }
+            """;
+
+        String response = mockMvc.perform(post("/api/payments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+            .andExpect(status().isCreated())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        String paymentId = response.substring(response.indexOf("\"id\":\"") + 6, response.indexOf("\"id\":\"") + 6 + 36);
+
+        mockMvc.perform(post("/api/payments/{paymentId}/authorize", paymentId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("AUTHORIZED"));
+    }
 }

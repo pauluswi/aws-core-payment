@@ -71,12 +71,10 @@ A lightweight demo uses mocked external services so the platform can be demonstr
      -H "Content-Type: application/json" \
      -d '{"merchantId":"demo-merchant","customerId":"demo-customer","reference":"ref-demo-1","amount":12.34,"currency":"USD","paymentMethod":"CARD","channel":"WEB","idempotencyKey":"idem-demo-1"}' | jq
 
-3. Trigger authorization processing (call orchestrator endpoint or simulate by invoking a POST to a helper endpoint). For this scaffold, call the orchestrator by ID via the app (example uses a direct internal endpoint if implemented):
+3. Trigger authorization processing:
 
    # Replace <paymentId> with the id returned by the create call
-   curl -s -X POST http://localhost:8080/api/payments/<paymentId>/authorize
-
-   (If no authorize endpoint exists, use the app logs or tests to run orchestrator flows.)
+   curl -s -X POST http://localhost:8080/api/payments/<paymentId>/authorize | jq
 
 4. Inspect events from the mock backbone:
 
