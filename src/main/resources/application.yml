@@ -13,3 +13,13 @@ management:
   endpoint:
     health:
       show-details: always
+
+# Security: set X-API-KEY here for API protection. Leave empty to disable for local/test.
+security:
+  api-key: ""
+
+logging:
+  level:
+    root: INFO
+
+# Additional observability settings could be placed here (trace, metrics, exporters)
