@@ -51,7 +51,44 @@ The project includes architecture documentation in the docs folder:
 
 ## Current repository status
 
-This repo is currently a scaffold for the platform and does not yet contain the full production implementation. It is intended as a foundation for building domain-driven payment services and related infrastructure components.
+This repository is a showcase project and intentionally keeps infrastructure, integration, and operational layers simplified or mocked. It is designed to demonstrate a realistic payment-platform architecture and implementation style without requiring a full AWS production environment or real external dependencies.
+
+The codebase purposefully uses in-memory repositories, mock event backbones, mock protocol adapters, and local demo wiring so you can understand the architecture, run the project locally, and present the platform concept clearly in demos.
+
+## Showcased architecture intent
+
+The project demonstrates a cloud-native payment platform pattern rather than a deployable production implementation. In the real world, the following would be connected to managed AWS services:
+
+- Amazon EKS for service hosting
+- Aurora PostgreSQL for transactional and ledger persistence
+- Amazon MSK for event streaming
+- AWS WAF / ALB / API Gateway for ingress security and routing
+- IAM and Secrets Manager for credential management
+- CloudWatch / OpenTelemetry / X-Ray for observability
+
+In this repository, those are either mocked, replaced with local in-memory equivalents, or represented by starter manifests and configuration templates.
+
+## What is mocked vs. real
+
+This project intentionally keeps some parts intentionally simple in order to stay runnable and demo-friendly.
+
+Mocked or in-memory pieces:
+- payment storage and idempotency index
+- ledger repository
+- event backbone and outbox transport
+- ISO 8583 / ISO 20022 adapters
+- risk and routing configuration
+- local security settings in application.yml
+- demonstration-only AWS deployment manifests
+
+Real architecture intent represented by the codebase:
+- domain-driven payment flow and lifecycle
+- orchestrator sequencing and state transitions
+- double-entry accounting concept
+- observability and correlation-id pattern
+- AWS deployment layout and Kubernetes manifests
+
+These are design patterns to communicate the target solution, not an end-to-end production deployment.
 
 ## Demo (Docker Compose)
 
