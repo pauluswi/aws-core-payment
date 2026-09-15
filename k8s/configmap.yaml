@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-core-payment-config
+  namespace: payment
+  labels:
+    app: aws-core-payment
+data:
+  SPRING_PROFILES_ACTIVE: "aws"
+  SERVER_PORT: "8080"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
+  SECURITY_API_KEY: ""
+  MESSAGING_BACKBONE: "inmemory"
+  MOCK_BACKBONE_URL: "http://mock-backbone:8081"
